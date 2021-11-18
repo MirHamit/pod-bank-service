@@ -1,0 +1,40 @@
+{
+    "name": "mirhamit/pod-bank-service",
+    "description": "Podium Bank Service Package",
+    "keywords": [
+        "laravel",
+        "MirHamit",
+        "Podium",
+        "Bank",
+        "Pasargad",
+        "پاسارگاد",
+        "بانک",
+        "انتقال وجه",
+        "وب سرویس",
+        "پادیوم"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "MirHamit\\PodBankService\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MirHamit\\PodBankService\\PodBankServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Hamid Musavi",
+            "email": "w1w@yahoo.com",
+            "homepage": "https://kratos.ir",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "ext-openssl": "*"
+    }
+}
