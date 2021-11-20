@@ -263,8 +263,7 @@ class SavingAccount
     }
 
     /**
-     * Shenase Service 487397
-     * /payBill/billNumber/paymentIds
+     * Shenase Service 440226
      */
     public function enteghalVajhPayaGuruhi($data, $bankData = true)
     {
@@ -310,7 +309,11 @@ class SavingAccount
         return DataSender::sendRequest($headers, $requestData, $bankData);
     }
 
-    public function estelamEnteghal($hesab, $sheba = null, $bankData = true)
+    /**
+     * Shenase Service 487396
+     * /estelamEnteghal/1234567890/2021/11/11
+     */
+    public function estelamEnteghal($paymentId, $year, $month, $date, $bankData = true)
     {
 
         if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdEstelamEnteghal') || !config('pod.pod_Services.scApiKeyEstelamEnteghal')) {
@@ -318,9 +321,8 @@ class SavingAccount
         }
         $data = "{".
             '"UserName":"'.config('pod.pod_UserName').'",'.
-            '"Date":"1400/08/26",'.
-            '"PaymentId":140008260572131544,'.
-            //            '"PaymentId":"123test",'.
+            '"Date":"' . "{$year}/{$month}/{$date}" . '",'.
+            '"PaymentId":"'.$paymentId.'",'.
             '"Timestamp":"'.date('Y/m/d H:i:s:B').'"'
             ."}";
         $headers = [
@@ -338,8 +340,8 @@ class SavingAccount
     }
 
     /**
-     * Shenase Service 671929
-     * /pasargadToSheba/1111.1111.11111111.1
+     * Shenase Service 487397
+     * /payBill/{billNumber}/{paymentIds}
      */
     public function payBill($billNumber, $paymentId, $bankData = true)
     {

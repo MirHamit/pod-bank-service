@@ -217,7 +217,7 @@ $data = (object) [];
 use MirHamit\PodBankService\Services\SavingAccount;
 
 $account = new SavingAccount();
-return $account->estelamEnteghal($paymentId);
+return $account->estelamEnteghal($paymentId, $year, $month, $date);
 ```
 
 ###سرویس پرداخت قبض از طریق سپرده
@@ -275,7 +275,7 @@ use MirHamit\PodBankService\Services\SavingAccount;
     "IsSuccess": true,
     "Message": "استعلام شماره شبا با موفقیت انجام شد.",
     "Data": {
-        "Sheba": "IR670570160180014890181101",
+        "Sheba": "IR*",
         "AccountOwners": [
             {
             "FirstName": "نام صاحب حساب",
