@@ -86,7 +86,7 @@ class DataSender
     {
         $signature = null;
 
-        openssl_sign($dataToSign, $signature, env('pod_PRIVATE_KEY'), OPENSSL_ALGO_SHA1);
+        openssl_sign($dataToSign, $signature, config('pod.pod_PRIVATE_KEY'), OPENSSL_ALGO_SHA1);
 
         return base64_encode($signature);
     }

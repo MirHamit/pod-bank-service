@@ -40,11 +40,32 @@ php artisan vendor:publish --tag=pod-config
 موجود بزارین و موارد مورد نیاز رو جایگزین کنین
 
 ```bash
-pod_UserName=
-pod_DepositNumber=
-pod_Sheba=
-pod_token=
-pod_PRIVATE_KEY=
+pod_UserName="نام کاربری که از بانک دریافت کرده‌اید"
+pod_DepositNumber="شماره حسابی که به بانک معرفی کرده‌اید"
+pod_Sheba="شماره شبای حسابی که به بانک معرفی کرده‌اید"
+pod_token="کلیدی که از قسمت ورود یکپارچه لیست کلیدها یا کلید جدید دریافت میکنید"
+# کلیدهایی که از قسمت میز کار سرویس گیرنده میگیرید
+pod_scApiKeyEstelamSheba="سپرده / استعلام - اطلاعات شبا"
+pod_scApiKeyMojudi="سپرده - موجودی حساب"
+pod_scApiKeyShebaToSeporde="پاسارگاد - سپرده / تبدیل - شبا به شماره سپرده"
+pod_scApiKeyPasargadToSheba="پاسارگاد - سپرده / تبدیل - شماره سپرده به شبا"
+pod_scApiKeyEstelamHesabPasargad="سپرده / استعلام - اطلاعات سپرده ( شخص و سایرین )"
+pod_scApiKeyEnteghalPaya="سپرده - انتقال وجه - ( داخلی و پایا )"
+pod_scApiKeyEnteghalSatna="سپرده - انتقال وجه - ( داخلی و ساتنا )"
+pod_scApiKeyEnteghalVajhPayaGuruhi="سپرده - انتقال وجه - گروهی/دسته ای ( داخلی و پایا )"
+pod_scApiKeyEstelamEnteghal="سپرده - وضعیت انتقال وجه"
+pod_scApiKeyPayBill="سپرده - پرداخت قبض از طریق سپرده"
+
+pod_scProductIdEstelamSheba=437012
+pod_scProductIdMojudi=434002
+pod_scProductIdShebaToSeporde=671932
+pod_scProductIdPasargadToSheba=671929
+pod_scProductIdEstelamHesabPasargad=671933
+pod_scProductIdEnteghalPaya=445929
+pod_scProductIdEnteghalSatna=465435
+pod_scProductIdEnteghalVajhPayaGuruhi=440226
+pod_scProductIdEstelamEnteghal=487396
+pod_scProductIdPayBill=487397
 ```
 
 ---

@@ -1,6 +1,6 @@
 {
     "name": "mirhamit/pod-bank-service",
-    "description": "Podium Bank Service Package",
+    "description": "Podium.ir Bank Service Package - پکیج سرویس بانکی پادیوم",
     "keywords": [
         "laravel",
         "MirHamit",
@@ -36,5 +36,7 @@
     ],
     "require": {
         "ext-openssl": "*"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

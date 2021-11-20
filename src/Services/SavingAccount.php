@@ -13,16 +13,6 @@ class SavingAccount
 
     protected $dataSender;
 
-    /**
-     * @throws Exception
-     */
-    public function __construct()
-    {
-        if (!config('pod.pod_UserName') || !config('pod.pod_DepositNumber')) {
-            throw new Exception('لطفا مقادیر مورد نیاز سرویس را بررسی کنید', 503);
-        }
-        $this->dataSender = new DataSender();
-    }
 
     /**
      * Shenase Service 434002
@@ -54,7 +44,7 @@ class SavingAccount
 
     /**
      * Shenase Service 671932
-     * /shebaToSeporde/IR670570160180014890181101
+     * /shebaToSeporde/IR111111111111111111111111
      */
     public function shebaToSeporde($sheba, $bankData = true)
     {
@@ -83,7 +73,7 @@ class SavingAccount
 
     /**
      * Shenase Service 671929
-     * /pasargadToSheba/1601.8000.14890181.1
+     * /pasargadToSheba/1111.1111.11111111.1
      */
     public function pasargadToSheba($hesab, $bankData = true)
     {
@@ -112,7 +102,7 @@ class SavingAccount
 
     /**
      * Shenase Service 437012
-     * /estelam/IR670570160180014890181101
+     * /estelam/IR111111111111111111111111
      */
     public function estelamSheba($sheba, $bankData = true)
     {
@@ -144,7 +134,7 @@ class SavingAccount
 
     /**
      * Shenase Service 671933
-     * /estelamHesabPasargad/1601.8000.14890181.1/IR670570160180014890181101
+     * /estelamHesabPasargad/1111.1111.11111111.1/IR111111111111111111111111
      */
     public function estelamHesabPasargad($hesab, $sheba = null, $bankData = true)
     {
@@ -349,7 +339,7 @@ class SavingAccount
 
     /**
      * Shenase Service 671929
-     * /pasargadToSheba/1601.8000.14890181.1
+     * /pasargadToSheba/1111.1111.11111111.1
      */
     public function payBill($billNumber, $paymentId, $bankData = true)
     {
@@ -377,4 +367,5 @@ class SavingAccount
         return DataSender::sendRequest($headers, $requestData, $bankData);
 
     }
+
 }
