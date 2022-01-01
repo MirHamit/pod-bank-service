@@ -6,9 +6,7 @@
 
 namespace MirHamit\PodBankService\Services;
 
-use Exception;
 use Illuminate\Support\Facades\Http;
-use SimpleXMLElement;
 
 class DataSender
 {
@@ -24,62 +22,19 @@ class DataSender
         return (new DataSender)->signData($dataToSign);
     }
 
-    private function sendHttpRequest($headers, $requestData, bool $bankData = true)
+    private function sendHttpRequest($headers, $requestData)
     {
-        $res = [];
-
         $req = Http::asForm()->withHeaders($headers)->post($this->requestUrl, $requestData);
-        $reqBody = json_decode($req->body());
-
-        $res['data'] = $reqBody;
-        if ($bankData) {
-            if ($req->successful()) {
-                if ($res['data']->hasError == false) {
-                    $response = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$2$3", $reqBody->result->result);
-                    try {
-                        $xml = new SimpleXMLElement($response);
-                    } catch (Exception $e) {
-                        return response('مشکلی در پردازش داده ها به وجود آمده است.'."<br>"
-                            .$e->getMessage(), 500);
-                    }
-                    $body = $xml->xpath('//soapBody')[0];
-                    $array = json_decode(json_encode((array) $body), true);
-                    $bankDataInArray = [];
-                    if (isset($array['GetShebaInfoResponse']['GetShebaInfoResult'])) {
-                        $bankDataInArray = $array['GetShebaInfoResponse']['GetShebaInfoResult'];
-                    } elseif (isset($array['GetDepositBalanceResponse']['GetDepositBalanceResult'])) {
-                        $bankDataInArray = $array['GetDepositBalanceResponse']['GetDepositBalanceResult'];
-                    } elseif (isset($array['ConvertShebaToDepositNumberResponse']['ConvertShebaToDepositNumberResult'])) {
-                        $bankDataInArray = $array['ConvertShebaToDepositNumberResponse']['ConvertShebaToDepositNumberResult'];
-                    } elseif (isset($array['ConvertDepositNumberToShebaResponse']['ConvertDepositNumberToShebaResult'])) {
-                        $bankDataInArray = $array['ConvertDepositNumberToShebaResponse']['ConvertDepositNumberToShebaResult'];
-                    } elseif (isset($array['GetDepositBaseInfoResponse']['GetDepositBaseInfoResult'])) {
-                        $bankDataInArray = $array['GetDepositBaseInfoResponse']['GetDepositBaseInfoResult'];
-                    } elseif (isset($array['TransferMoneyResponse']['TransferMoneyResult'])) {
-                        $bankDataInArray = $array['TransferMoneyResponse']['TransferMoneyResult'];
-                    } elseif (isset($array['TransferMoneySetOrderResponse']['TransferMoneySetOrderResult'])) {
-                        $bankDataInArray = $array['TransferMoneySetOrderResponse']['TransferMoneySetOrderResult'];
-                    } elseif (isset($array['GetTransferMoneyStateResponse']['GetTransferMoneyStateResult'])) {
-                        $bankDataInArray = $array['GetTransferMoneyStateResponse']['GetTransferMoneyStateResult'];
-                    } elseif (isset($array['CoreBatchTransferPayaResponse']['CoreBatchTransferPayaResult'])) {
-                        $bankDataInArray = $array['CoreBatchTransferPayaResponse']['CoreBatchTransferPayaResult'];
-                    } elseif (isset($array['BillPaymentByDepositResponse']['BillPaymentByDepositResult'])) {
-                        $bankDataInArray = $array['BillPaymentByDepositResponse']['BillPaymentByDepositResult'];
-                    }
-                    $res['bankData'] = json_decode($bankDataInArray);
-                } else {
-                    $res['bankData'] = [
-                        "IsSuccess" => false,
-                    ];
+        $result = $req->body();
+        if ($this->isJson($req->body())) {
+            $result = json_decode($req->body());
+            if (!$result->hasError) {
+                if ($this->isJson($result->result->result)) {
+                    $result->result->result = json_decode($result->result->result);
                 }
-            } else {
-                $res['data']->hasError = false;
-                $res['bankData'] = [
-                    "IsSuccess" => false,
-                ];
             }
         }
-        return $res;
+        return $result;
     }
 
     private function signData($dataToSign): string
@@ -89,5 +44,11 @@ class DataSender
         openssl_sign($dataToSign, $signature, config('pod.pod_PRIVATE_KEY'), OPENSSL_ALGO_SHA1);
 
         return base64_encode($signature);
+    }
+
+    private function isJson($string)
+    {
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
     }
 }

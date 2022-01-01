@@ -2,7 +2,9 @@
 
 namespace MirHamit\PodBankService\Services;
 
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Str;
 
 /**
  * @author Həmid Musəvi <w1w@yahoo.com>
@@ -15,19 +17,17 @@ class SavingAccount
 
 
     /**
-     * Shenase Service 434002
+     * Shenase Service 1077449
      * /mojudi
      * */
-    public function mojudi($bankData = true)
+    public function mojudi()
     {
         if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdMojudi') || !config('pod.pod_Services.scApiKeyMojudi')) {
             throw new Exception('لطفا مقادیر مورد نیاز سرویس را بررسی کنید', 503);
         }
-        $data = "{".
-            '"UserName":"'.config('pod.pod_UserName').'",'.
-            '"DepositNumber":"'.config('pod.pod_DepositNumber').'",'.
-            '"Timestamp":"'.date('Y/m/d H:i:s:B').'"'
-            ."}";
+        $data = "{".'"DepositNumber":"'.config('pod.pod_DepositNumber').'"'."}";
+
+
         $headers = [
             '_token_'        => config('pod.pod_token'),
             '_token_issuer_' => '1',
@@ -37,84 +37,24 @@ class SavingAccount
             'scProductId' => config('pod.pod_Services.scProductIdMojudi'),
             'scApiKey'    => config('pod.pod_Services.scApiKeyMojudi'),
             'request'     => $data,
-            'signature'   => DataSender::sign($data),
         ];
-        return DataSender::sendRequest($headers, $requestData, $bankData);
+        return DataSender::sendRequest($headers, $requestData);
     }
 
-    /**
-     * Shenase Service 671932
-     * /shebaToSeporde/IR111111111111111111111111
-     */
-    public function shebaToSeporde($sheba, $bankData = true)
-    {
-        if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdShebaToSeporde') || !config('pod.pod_Services.scApiKeyShebaToSeporde')) {
-            throw new Exception('لطفا مقادیر مورد نیاز سرویس را بررسی کنید', 503);
-        }
-        $data = "{".
-            '"UserName":"'.config('pod.pod_UserName').'",'.
-            '"Sheba":"'.$sheba.'",'.
-            '"Timestamp":"'.date('Y/m/d H:i:s:B').'"'
-            ."}";
-        $headers = [
-            '_token_'        => config('pod.pod_token'),
-            '_token_issuer_' => '1',
-            'Content-Type'   => 'application/x-www-form-urlencoded',
-        ];
-        $requestData = [
-            'scProductId' => config('pod.pod_Services.scProductIdShebaToSeporde'),
-            'scApiKey'    => config('pod.pod_Services.scApiKeyShebaToSeporde'),
-            'request'     => $data,
-            'signature'   => DataSender::sign($data),
-        ];
-
-        return DataSender::sendRequest($headers, $requestData, $bankData);
-    }
 
     /**
-     * Shenase Service 671929
-     * /pasargadToSheba/1111.1111.11111111.1
-     */
-    public function pasargadToSheba($hesab, $bankData = true)
-    {
-        if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdPasargadToSheba') || !config('pod.pod_Services.scApiKeyPasargadToSheba')) {
-            throw new Exception('لطفا مقادیر مورد نیاز سرویس را بررسی کنید', 503);
-        }
-        $data = "{".
-            '"UserName":"'.config('pod.pod_UserName').'",'.
-            '"DepositNumber":"'.$hesab.'",'.
-            '"Timestamp":"'.date('Y/m/d H:i:s:B').'"'
-            ."}";
-        $headers = [
-            '_token_'        => config('pod.pod_token'),
-            '_token_issuer_' => '1',
-            'Content-Type'   => 'application/x-www-form-urlencoded',
-        ];
-        $requestData = [
-            'scProductId' => config('pod.pod_Services.scProductIdPasargadToSheba'),
-            'scApiKey'    => config('pod.pod_Services.scApiKeyPasargadToSheba'),
-            'request'     => $data,
-            'signature'   => DataSender::sign($data),
-        ];
-        return DataSender::sendRequest($headers, $requestData, $bankData);
-
-    }
-
-    /**
-     * Shenase Service 437012
+     * Shenase Service 1115396
      * /estelam/IR111111111111111111111111
      */
-    public function estelamSheba($sheba, $bankData = true)
+    public function estelamSheba($sheba, $paymentId = null)
     {
 
         if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdEstelamSheba') || !config('pod.pod_Services.scApiKeyEstelamSheba')) {
             throw new Exception('لطفا مقادیر مورد نیاز سرویس را بررسی کنید', 503);
         }
         $data = "{".
-            '"UserName":"'.config('pod.pod_UserName').'",'.
-            '"DepositNumber":"'.config('pod.pod_DepositNumber').'",'.
-            '"Sheba":"'.$sheba.'",'.
-            '"Timestamp":"'.date('Y/m/d H:i:s:B').'"'
+            '"Iban":"'.$sheba.'",'.
+            '"PaymentId":"'.$paymentId.'"'
             ."}";
         $headers = [
             '_token_'        => config('pod.pod_token'),
@@ -125,77 +65,60 @@ class SavingAccount
             'scProductId' => config('pod.pod_Services.scProductIdEstelamSheba'),
             'scApiKey'    => config('pod.pod_Services.scApiKeyEstelamSheba'),
             'request'     => $data,
-            'signature'   => DataSender::sign($data),
         ];
 
-        return DataSender::sendRequest($headers, $requestData, $bankData);
+        return DataSender::sendRequest($headers, $requestData);
     }
 
 
     /**
-     * Shenase Service 671933
-     * /estelamHesabPasargad/1111.1111.11111111.1/IR111111111111111111111111
-     */
-    public function estelamHesabPasargad($hesab, $sheba = null, $bankData = true)
-    {
-
-        if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdEstelamHesabPasargad') || !config('pod.pod_Services.scApiKeyEstelamHesabPasargad')) {
-            throw new Exception('لطفا مقادیر مورد نیاز سرویس را بررسی کنید', 503);
-        }
-        $data = "{".
-            '"UserName":"'.config('pod.pod_UserName').'",'.
-            '"DepositNumber":"'.$hesab.'",'.
-            '"Sheba":"'.$sheba.'",'.
-            '"Timestamp":"'.date('Y/m/d H:i:s:B').'"'
-            ."}";
-        $headers = [
-            '_token_'        => config('pod.pod_token'),
-            '_token_issuer_' => '1',
-            'Content-Type'   => 'application/x-www-form-urlencoded',
-        ];
-        $requestData = [
-            'scProductId' => config('pod.pod_Services.scProductIdEstelamHesabPasargad'),
-            'scApiKey'    => config('pod.pod_Services.scApiKeyEstelamHesabPasargad'),
-            'request'     => $data,
-            'signature'   => DataSender::sign($data),
-        ];
-        return DataSender::sendRequest($headers, $requestData, $bankData);
-    }
-
-
-    /**
-     * Shenase Service 445929
+     * Shenase Service 1076566
      * /enteghalVajhPaya
      */
     public function enteghalVajhPaya(
-        $destSheba,
-        $centralBankTransferDetailType,
-        $destFirstName,
-        $destLastName,
         $amount,
-        $sourceComment,
-        $destComment,
-        $paymentId,
-        $destDepositNumber = null,
-        $bankData = true
+        $destinationIban,
+        $recieverFullName,
+        $transactionDate,
+        $description,
+        $srcComment,
+        $destBankCode,
+        $transactionBillNumber = null,
+        $transactionId = null
     ) {
         if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdEnteghalPaya') || !config('pod.pod_Services.scApiKeyEnteghalPaya')) {
             throw new Exception('لطفا مقادیر مورد نیاز سرویس را بررسی کنید', 503);
         }
+        if (!$transactionId) {
+            $orgCode = "4321";
+            $randomString = Str::random(8);
+            $dateTime = Carbon::now()->getPreciseTimestamp(3);
+            $asci = 0;
+            foreach (str_split($orgCode) as $item) {
+                $asci += ord($item);
+            }
+            foreach (str_split($randomString) as $item) {
+                $asci += ord($item);
+            }
+            foreach (str_split($dateTime) as $item) {
+                $asci += ord($item);
+            }
+            $transactionId = "{$orgCode}-{$randomString}-{$dateTime}-{$asci}";
+        }
         $data = "{".
-            '"UserName":"'.config('pod.pod_UserName').'",'.
-            '"SourceDepositNumber":"'.config('pod.pod_DepositNumber').'",'.
-            '"SourceSheba":"'.config('pod.pod_Sheba').'",'.
-            '"DestDepositNumber":"'.$destDepositNumber.'",'.
-            '"DestSheba":"'.$destSheba.'",'.
-            '"CentralBankTransferDetailType":"'.$centralBankTransferDetailType.'",'.
-            '"DestFirstName":"'.$destFirstName.'",'.
-            '"DestLastName":"'.$destLastName.'",'.
-            '"Amount":"'.$amount.'",'. // rial
-            '"SourceComment":"'.$sourceComment.'",'.
-            '"DestComment":"'.$destComment.'",'.
-            '"PaymentId":"'.$paymentId.'",'.
-            '"Timestamp":"'.date('Y/m/d H:i:s:B').'"'
+            '"Amount":"'.$amount.'",'. //مبلغ تراکنش
+            '"SourceDepNum":"'.config('pod.pod_DepositNumber').'",'. //شماره سپرده ی مبدا
+            '"DestinationIban":"'.$destinationIban.'",'. //شماره شبای مقصد
+            '"RecieverFullName":"'.$recieverFullName.'",'. //نام گیرنده‌ی وجه
+            '"TransactionDate":"'.$transactionDate.'",'.
+            '"Description":"'.$description.'",'. //شرح انتقال
+            '"TransactionId":"'.$transactionId.'",'. //شناسه یکتای تراکنش
+            '"IsAutoVerify":"true",'. //تایید یا عدم تایید خودکار
+            '"SrcComment":"'.$srcComment.'",'. //شرح مبدا
+            '"SenderReturnDepositNumber":"'.config('pod.pod_DepositNumber').'",'. //شماره سپرده‌ی بازگشت وجه
+            '"CustomerNumber":"'.config('pod.pod_customerNumber').'",'. //شماره مشتری
+            '"DestBankCode":"'.$destBankCode.'",'. //کد بانک مقصد
+            '"TransactionBillNumber":"'.$transactionBillNumber.'"' //شناسه‌ی واریز
             ."}";
         $headers = [
             '_token_'        => config('pod.pod_token'),
@@ -206,154 +129,44 @@ class SavingAccount
             'scProductId' => config('pod.pod_Services.scProductIdEnteghalPaya'),
             'scApiKey'    => config('pod.pod_Services.scApiKeyEnteghalPaya'),
             'request'     => $data,
-            'signature'   => DataSender::sign($data),
-        ];
-        return DataSender::sendRequest($headers, $requestData, $bankData);
-
-    }
-
-    /**
-     * Shenase Service 465435
-     * /enteghalVajhSatna
-     */
-    public function enteghalVajhSatna(
-        $destSheba,
-        $centralBankTransferDetailType,
-        $destFirstName,
-        $destLastName,
-        $amount,
-        $sourceComment,
-        $destComment,
-        $paymentId,
-        $destDepositNumber = null,
-        $destBankCode = null,
-        $bankData = true
-    ) {
-        if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdEnteghalSatna') || !config('pod.pod_Services.scApiKeyEnteghalSatna')) {
-            throw new Exception('لطفا مقادیر مورد نیاز سرویس را بررسی کنید', 503);
-        }
-        $data = "{".
-            '"UserName":"'.config('pod.pod_UserName').'",'.
-            '"SourceDepositNumber":"'.config('pod.pod_DepositNumber').'",'.
-            '"SourceSheba":"'.config('pod.pod_Sheba').'",'.
-            '"DestSheba":"'.$destSheba.'",'.
-            '"DestDepositNumber":"'.$destDepositNumber.'",'.
-            '"DestBankCode":"'.$destBankCode.'",'.
-            '"DestFirstName":"'.$destFirstName.'",'.
-            '"DestLastName":"'.$destLastName.'",'.
-            '"Amount":"'.$amount.'",'. // rial
-            '"CentralBankTransferDetailType":"'.$centralBankTransferDetailType.'",'.
-            '"SourceComment":"'.$sourceComment.'",'.
-            '"DestComment":"'.$destComment.'",'.
-            '"PaymentId":"'.$paymentId.'",'.
-            '"Timestamp":"'.date('Y/m/d H:i:s:B').'"'
-            ."}";
-        $headers = [
-            '_token_'        => config('pod.pod_token'),
-            '_token_issuer_' => '1',
-            'Content-Type'   => 'application/x-www-form-urlencoded',
-        ];
-        $requestData = [
-            'scProductId' => config('pod.pod_Services.scProductIdEnteghalSatna'),
-            'scApiKey'    => config('pod.pod_Services.scApiKeyEnteghalSatna'),
-            'request'     => $data,
-            'signature'   => DataSender::sign($data),
-        ];
-        return DataSender::sendRequest($headers, $requestData, $bankData);
-    }
-
-    /**
-     * Shenase Service 440226
-     */
-    public function enteghalVajhPayaGuruhi($data, $bankData = true)
-    {
-        if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdEnteghalVajhPayaGuruhi') || !config('pod.pod_Services.scApiKeyEnteghalVajhPayaGuruhi')) {
-            throw new Exception('لطفا مقادیر مورد نیاز سرویس را بررسی کنید', 503);
-        }
-        $batchPayaItemInfoToString = '';
-        $numItems = count($data->BatchPayaItemInfos);
-        $i = 0;
-        foreach ($data->BatchPayaItemInfos as $batchPayaItemInfo) {
-            $batchPayaItemInfoToString .= '{'.
-                '"Amount":"'.$batchPayaItemInfo['Amount'].'",'.
-                '"BeneficiaryFullName":"'.$batchPayaItemInfo['BeneficiaryFullName'].'",'.
-                '"Description":"'.$batchPayaItemInfo['Description'].'",'.
-                '"DestShebaNumber":"'.$batchPayaItemInfo['DestShebaNumber'].'",'.
-                '"BillNumber":"'.$batchPayaItemInfo['BillNumber'].'"'.
-                '}';
-            ++$i === $numItems ?: $batchPayaItemInfoToString .= ',';
-        }
-
-        $convertedData = "{".
-            '"UserName":"'.config('pod.pod_UserName').'",'.
-            '"SourceDepositNumber":"'.config('pod.pod_DepositNumber').'",'.
-            '"FileUniqueIdentifier":"'.$data->FileUniqueIdentifier.'",'.
-            '"TransferMoneyBillNumber":"'.$data->TransferMoneyBillNumber.'",'. // shenase ghabz = *09az
-            '"CentralBankTransferDetailType":"'.$data->CentralBankTransferDetailType.'",'.
-            '"BatchPayaItemInfos":['.
-            $batchPayaItemInfoToString.
-            '],'.
-            '"Timestamp":"'.date('Y/m/d H:i:s:B').'"'
-            ."}";
-        $headers = [
-            '_token_'        => config('pod.pod_token'),
-            '_token_issuer_' => '1',
-            'Content-Type'   => 'application/x-www-form-urlencoded',
-        ];
-        $requestData = [
-            'scProductId' => config('pod.pod_Services.scProductIdEnteghalVajhPayaGuruhi'),
-            'scApiKey'    => config('pod.pod_Services.scApiKeyEnteghalVajhPayaGuruhi'),
-            'request'     => $convertedData,
-            'signature'   => DataSender::sign($convertedData),
-        ];
-        return DataSender::sendRequest($headers, $requestData, $bankData);
-    }
-
-    /**
-     * Shenase Service 487396
-     * /estelamEnteghal/1234567890/2021/11/11
-     */
-    public function estelamEnteghal($paymentId, $year, $month, $date, $bankData = true)
-    {
-
-        if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdEstelamEnteghal') || !config('pod.pod_Services.scApiKeyEstelamEnteghal')) {
-            throw new Exception('لطفا مقادیر مورد نیاز سرویس را بررسی کنید', 503);
-        }
-        $data = "{".
-            '"UserName":"'.config('pod.pod_UserName').'",'.
-            '"Date":"' . "{$year}/{$month}/{$date}" . '",'.
-            '"PaymentId":"'.$paymentId.'",'.
-            '"Timestamp":"'.date('Y/m/d H:i:s:B').'"'
-            ."}";
-        $headers = [
-            '_token_'        => config('pod.pod_token'),
-            '_token_issuer_' => '1',
-            'Content-Type'   => 'application/x-www-form-urlencoded',
-        ];
-        $requestData = [
-            'scProductId' => config('pod.pod_Services.scProductIdEstelamEnteghal'),
-            'scApiKey'    => config('pod.pod_Services.scApiKeyEstelamEnteghal'),
-            'request'     => $data,
-            'signature'   => DataSender::sign($data),
         ];
         return DataSender::sendRequest($headers, $requestData);
     }
 
+
     /**
-     * Shenase Service 487397
-     * /payBill/{billNumber}/{paymentIds}
+     * Shenase Service 1077467
+     * /suratHesab/1400-10-08/1400-10-08/00-00-00/23-59-59
      */
-    public function payBill($billNumber, $paymentId, $bankData = true)
-    {
-        if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdPayBill') || !config('pod.pod_Services.scApiKeyPayBill')) {
+    public function suratHesab(
+        $fromDate,
+        $toDate,
+        $fromHour = "00:00:00",
+        $toHour = "23:59:59",
+        $resultCount = 99999999
+    ) {
+        if (!config('pod.pod_token') || !config('pod.pod_Services.scProductIdSuratHesab') || !config('pod.pod_Services.scApiKeySuratHesab')) {
             throw new Exception('لطفا مقادیر مورد نیاز سرویس را بررسی کنید', 503);
         }
+        if (Str::contains($fromDate, '-')) {
+            $fromDate = Str::replace('-', '/', $fromDate);
+        }
+        if (Str::contains($toDate, '-')) {
+            $toDate = Str::replace('-', '/', $toDate);
+        }
+        if (Str::contains($fromHour, '-')) {
+            $fromHour = Str::replace('-', ':', $fromHour);
+        }
+        if (Str::contains($toHour, '-')) {
+            $toHour = Str::replace('-', ':', $toHour);
+        }
         $data = "{".
-            '"UserName":"'.config('pod.pod_UserName').'",'.
             '"DepositNumber":"'.config('pod.pod_DepositNumber').'",'.
-            '"BillNumber":"'.$billNumber.'",'.
-            '"PaymentId":"'.$paymentId.'",'.
-            '"Timestamp":"'.date('Y/m/d H:i:s:B').'"'
+            '"FromDate":"'.$fromDate.'",'.
+            '"ToDate":"'.$toDate.'",'.
+            '"FromTime":"'.$fromHour.'",'.
+            '"ToTime":"'.$toHour.'",'.
+            '"ResultCount":"'.$resultCount.'"'
             ."}";
         $headers = [
             '_token_'        => config('pod.pod_token'),
@@ -361,13 +174,13 @@ class SavingAccount
             'Content-Type'   => 'application/x-www-form-urlencoded',
         ];
         $requestData = [
-            'scProductId' => config('pod.pod_Services.scProductIdPayBill'),
-            'scApiKey'    => config('pod.pod_Services.scApiKeyPayBill'),
+            'scProductId' => config('pod.pod_Services.scProductIdSuratHesab'),
+            'scApiKey'    => config('pod.pod_Services.scApiKeySuratHesab'),
             'request'     => $data,
-            'signature'   => DataSender::sign($data),
         ];
-        return DataSender::sendRequest($headers, $requestData, $bankData);
-
+        //        return $requestData;
+        return DataSender::sendRequest($headers, $requestData);
     }
+
 
 }
