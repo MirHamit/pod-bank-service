@@ -82,7 +82,6 @@ class SavingAccount
         $transactionDate,
         $description,
         $srcComment,
-        $destBankCode,
         $transactionBillNumber = null,
         $transactionId = null
     ) {
@@ -117,7 +116,7 @@ class SavingAccount
             '"SrcComment":"'.$srcComment.'",'. //شرح مبدا
             '"SenderReturnDepositNumber":"'.config('pod.pod_DepositNumber').'",'. //شماره سپرده‌ی بازگشت وجه
             '"CustomerNumber":"'.config('pod.pod_customerNumber').'",'. //شماره مشتری
-            '"DestBankCode":"'.$destBankCode.'",'. //کد بانک مقصد
+            '"DestBankCode":"'.substr($destinationIban, 5, 2).'",'. //کد بانک مقصد
             '"TransactionBillNumber":"'.$transactionBillNumber.'"' //شناسه‌ی واریز
             ."}";
         $headers = [
